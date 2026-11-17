@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>短剧详情 · 快手原生端上传</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23f0343f'/%3E%3Ctext x='16' y='21' font-size='13' font-family='Arial' font-weight='bold' fill='%23fff' text-anchor='middle'%3ENS%3C/text%3E%3C/svg%3E"/>
+<link rel="stylesheet" href="assets/app.css"/>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-film" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7 4v16M17 4v16M2.5 9h4.5M2.5 15h4.5M17 9h4.5M17 15h4.5" stroke="currentColor" stroke-width="1.7"/></symbol>
+  <symbol id="i-mega" viewBox="0 0 24 24"><path d="M3 10.5v3a1 1 0 0 0 1 1h2.2L11 18V6L6.2 9.4H4a1 1 0 0 0-1 1.1Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 9a4 4 0 0 1 0 6M16.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M8 16v-4M12.5 16V8M17 16v-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1.1.9-1.1 1.7v.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3.8 21 20H3L12 3.8Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 9.5v5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="17.4" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="m8 12.4 2.6 2.6L16 9.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-xcircle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="m9 9 6 6M15 9l-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3 5 13.5h5.5L10 21l8-10.5h-5.5L13 3Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  <symbol id="i-empty" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 10h18M8 15h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+</svg>
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-logo">NS</div>
+    <div class="brand-name">NetShort管理系统</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-group-title"><svg width="15" height="15"><use href="#i-mega"/></svg>商业化活动</div>
+    <div class="nav-group-title"><svg width="15" height="15"><use href="#i-target"/></svg>广告中台</div>
+    <div class="nav-group">
+      <div class="nav-group-title open"><svg width="15" height="15"><use href="#i-film"/></svg>视频管理
+        <svg class="chev" width="12" height="12"><use href="#i-chev"/></svg>
+      </div>
+      <div class="nav-sub">
+        <div class="nav-item" onclick="toast('演示环境：剧本库页面未包含在本 Demo 中')">剧本库</div>
+        <div class="nav-item" onclick="toast('演示环境：短剧管理页面未包含在本 Demo 中')">短剧管理</div>
+        <div class="nav-item active" onclick="location.href='快手原生端上传.html'">快手原生端上传</div>
+      </div>
+    </div>
+    <div class="nav-group-title"><svg width="15" height="15"><use href="#i-chart"/></svg>营销管理</div>
+  </nav>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="crumb">
+      <a href="快手原生端上传.html">视频管理</a>
+      <span class="sep">/</span>
+      <a href="快手原生端上传.html">快手原生端上传</a>
+      <span class="sep">/</span>
+      <span class="cur">短剧详情</span>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" title="使用说明" onclick="toast('详情页展示短剧基础信息与已提交至快手的全部剧集')"><svg width="17" height="17"><use href="#i-help"/></svg></button>
+      <div class="user"><div class="avatar">春</div><span>春明</span></div>
+    </div>
+  </header>
+
+  <main class="page" id="detailPage">
+    <div class="back-row">
+      <a class="back-link" href="快手原生端上传.html"><svg width="14" height="14"><use href="#i-back"/></svg>返回上传列表</a>
+    </div>
+
+    <div class="detail-head">
+      <div class="detail-title-wrap">
+        <div class="detail-title">
+          <h1 id="dTitle">短剧详情</h1>
+          <span id="dBadge"></span>
+        </div>
+        <div class="detail-sub" id="dSub"></div>
+      </div>
+      <div class="detail-actions" id="dActions"></div>
+    </div>
+
+    <!-- 基础信息 -->
+    <section class="card base-card">
+      <div class="panel-head">
+        <h2 class="panel-title">基础信息</h2>
+      </div>
+      <div class="base-body" id="baseBody"></div>
+    </section>
+
+    <!-- 剧集列表 -->
+    <section class="card ep-card">
+      <div class="panel-head">
+        <h2 class="panel-title">剧集列表</h2>
+        <div class="right" id="epSummary"></div>
+      </div>
+      <div class="table-wrap">
+        <table class="grid ep-table">
+          <colgroup>
+            <col style="width:84px"/><col/><col style="width:148px"/>
+            <col style="width:82px"/><col style="width:160px"/><col style="width:116px"/>
+          </colgroup>
+          <thead>
+            <tr>
+              <th>剧集序号</th><th>剧集文件名</th><th>文件ID</th>
+              <th>文件格式</th><th>快手videoId</th><th>快手转码状态</th>
+            </tr>
+          </thead>
+          <tbody id="epBody"></tbody>
+        </table>
+      </div>
+      <div class="pager" id="epPager"></div>
+    </section>
+
+    <div class="empty hidden" id="notFound">
+      <div class="empty-ico"><svg width="26" height="26"><use href="#i-empty"/></svg></div>
+      <div class="empty-title">未找到该短剧记录</div>
+      <div class="empty-desc">记录可能已被删除，请返回列表重新选择</div>
+      <a class="btn btn-default btn-sm" href="快手原生端上传.html">返回列表</a>
+    </div>
+  </main>
+</div>
+
+<!-- 重试确认 -->
+<div class="mask hidden" id="modal-retry">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 class="modal-title">重试上传</h3>
+      <button class="modal-close" onclick="closeModal('modal-retry')"><svg width="16" height="16"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="warn-block">
+        <span class="wico"><svg width="16" height="16"><use href="#i-warn"/></svg></span>
+        <div>将会按照短剧最新信息、成片（仅转码失败剧集）进行重传。<b>首次上传24小时后再进行重试，会在快手侧生成新的dramaId，请注意。</b></div>
+      </div>
+      <div id="retryScope" style="margin-top:12px;font-size:12.5px;color:var(--ink-3);line-height:1.7;"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-default" onclick="closeModal('modal-retry')">取消</button>
+      <button class="btn btn-primary" onclick="confirmRetry()">确认重试</button>
+    </div>
+  </div>
+</div>
+
+<!-- 失败原因 -->
+<div class="mask hidden" id="modal-reason">
+  <div class="modal wide">
+    <div class="modal-head">
+      <h3 class="modal-title">短剧创建失败</h3>
+      <button class="modal-close" onclick="closeModal('modal-reason')"><svg width="16" height="16"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="modal-body" id="reasonBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-default" onclick="closeModal('modal-reason')">关闭</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="assets/data.js"></script>
+<script src="assets/detail.js"></script>
+</body>
+</html>
