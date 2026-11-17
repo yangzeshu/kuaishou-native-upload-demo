@@ -168,8 +168,8 @@ const DRAMAS = [
   {
     id: 'ns-210773332870', dramaCode: '210773332870', name: '闪婚老公是首富', lang: '泰语',
     episodes: 63, duration: '02:11:47', scriptName: 'My Billionaire Flash Marriage', scriptCode: 'P1123',
-    onlineStatus: '待上线', paidEpisodes: 55, syncStatus: 'uploading',
-    uploadedEpisodes: 41, uploader: '春明', uploadTime: '2026-11-14 10:30'
+    onlineStatus: '待上线', paidEpisodes: 55, syncStatus: 'creating',
+    uploadedEpisodes: 63, uploader: '春明', uploadTime: '2026-11-14 10:30'
   },
   {
     id: 'ns-210773329004', dramaCode: '210773329004', name: '保镖大人请自重', lang: '英语',
@@ -190,6 +190,7 @@ const LANGS = ['英语', '西班牙语', '葡萄牙语', '日语', '韩语', '�
 const ONLINE_STATUS = ['待上线', '预上线', '已上线'];
 const SYNC_STATUS = {
   uploading: { label: '物料上传中', cls: 'pill-blue', desc: '剧集视频上传 / 转码处理中' },
+  creating: { label: '短剧创建中', cls: 'pill-violet', desc: '剧集视频已全部转码成功，短剧创建中' },
   upload_failed: { label: '物料上传失败', cls: 'pill-orange', desc: '存在转码失败的剧集视频' },
   create_failed: { label: '短剧创建失败', cls: 'pill-red', desc: '物料已完成，短剧创建失败' },
   success: { label: '短剧创建成功', cls: 'pill-green', desc: '已在快手创建短剧' }

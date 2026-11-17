@@ -643,3 +643,6 @@ tbody tr:hover td.col-action{background:#fafcff;}
 /* header tooltip alignment */
 table.grid th .tip{vertical-align:-2px;}
 .info-item .k{display:flex;align-items:center;gap:4px;}
+
+/* 短剧创建中 */
+.pill-violet{background:#f2efff;color:#5b4bd6;}

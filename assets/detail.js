@@ -71,7 +71,7 @@ function renderBase() {
       <button class="copy-mini" title="复制" onclick="copyId('${d.kwaiDramaId}')"><svg width="12" height="12"><use href="#i-copy"/></svg></button>`;
   } else if (d.syncStatus === 'create_failed') {
     kwaiCell = `<span class="muted">—</span><button class="link" style="font-size:12px" onclick="showReason()">查看失败原因</button>`;
-  } else if (d.syncStatus === 'uploading' || d.syncStatus === 'upload_failed') {
+  } else if (['uploading', 'upload_failed', 'creating'].includes(d.syncStatus)) {
     kwaiCell = `<span class="muted">—</span>`;
   }
 
@@ -103,7 +103,14 @@ function renderBase() {
             <span class="pill ${ONLINE_CLS[d.onlineStatus]}"><i class="dot"></i>${d.onlineStatus}</span>
           </div>
         </div>
-        <div class="info-item"><div class="k">付费集数</div><div class="v">${d.paidEpisodes} <span class="muted">/ ${d.episodes} 集</span></div></div>
+        <div class="info-item">
+          <div class="k">付费集数
+            <span class="tip" data-tip="该短剧在ns_app的付费集数" style="color:var(--ink-4);cursor:help;">
+              <svg width="12" height="12"><use href="#i-help"/></svg>
+            </span>
+          </div>
+          <div class="v">${d.paidEpisodes} <span class="muted">/ ${d.episodes} 集</span></div>
+        </div>
         <div class="info-item"><div class="k">快手同步状态</div><div class="v">${statusBadge(d)}</div></div>
         <div class="info-item"><div class="k">快手短剧ID</div><div class="v" style="gap:4px">${kwaiCell}</div></div>
         <div class="info-item"><div class="k">上传人</div><div class="v">${d.uploader}</div></div>

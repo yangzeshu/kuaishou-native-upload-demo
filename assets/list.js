@@ -101,12 +101,12 @@ function refreshList() {
 /* ---------- table ---------- */
 function syncCell(d) {
   const cfg = SYNC_STATUS[d.syncStatus];
-  const dot = d.syncStatus === 'uploading' ? '<i class="pulse"></i>' : '<i class="dot"></i>';
+  const dot = (d.syncStatus === 'uploading' || d.syncStatus === 'creating') ? '<i class="pulse"></i>' : '<i class="dot"></i>';
   let sub = '';
   if (d.syncStatus === 'success') {
     sub = `<div class="sync-sub"><span>快手短剧ID</span><span class="mono">${d.kwaiDramaId}</span>
       <button class="copy-mini" title="复制" data-copy="${d.kwaiDramaId}"><svg width="12" height="12"><use href="#i-copy"/></svg></button></div>`;
-  } else if (d.syncStatus === 'uploading') {
+  } else if (d.syncStatus === 'uploading' || d.syncStatus === 'creating') {
     sub = '';
   } else if (d.syncStatus === 'upload_failed') {
     sub = `<div class="sync-sub"><span class="warn">${d.failedEpisodes} 集转码失败</span><span>·</span><span>共 ${d.episodes} 集</span></div>`;
