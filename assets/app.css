@@ -646,3 +646,80 @@ table.grid th .tip{vertical-align:-2px;}
 
 /* 短剧创建中 */
 .pill-violet{background:#f2efff;color:#5b4bd6;}
+
+/* ============ 任务新建 / 编辑字段 ============ */
+.modal.xwide{width:1040px;max-width:calc(100vw - 48px);}
+.modal.form{width:680px;}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;}
+.section-title{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--ink);}
+.section-title::before{content:"";width:3px;height:12px;border-radius:2px;background:var(--blue);flex:0 0 auto;}
+.upload-zone{
+  border:1px dashed #cfd8e6;border-radius:10px;background:#fbfcfe;
+  padding:15px 18px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;
+}
+.upload-zone:hover{border-color:var(--blue);background:#f7faff;}
+.upload-zone.parsing{opacity:.6;pointer-events:none;}
+.uz-icon{color:#9aa9c0;display:flex;justify-content:center;margin-bottom:4px;}
+.uz-title{font-size:13px;color:var(--ink);}
+.uz-desc{font-size:11.5px;color:var(--ink-4);margin-top:3px;}
+
+.import-wrap{border:1px solid var(--line);border-radius:10px;overflow-x:auto;}
+table.import{width:100%;min-width:940px;border-collapse:separate;border-spacing:0;table-layout:fixed;}
+table.import th{
+  background:#fafbfc;color:var(--ink-3);font-size:12px;font-weight:500;
+  text-align:left;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap;
+}
+table.import td{padding:8px;border-bottom:1px solid var(--line-soft);vertical-align:top;}
+table.import tr:last-child td{border-bottom:none;}
+table.import .input{height:32px;font-size:12.5px;padding:0 8px;}
+table.import .textarea{min-height:66px;font-size:12.5px;padding:7px 8px;line-height:1.6;}
+.import-empty{
+  border:1px dashed var(--line);border-radius:10px;padding:26px;text-align:center;
+  color:var(--ink-4);font-size:12.5px;background:#fcfcfd;
+}
+.import-meta{font-size:11.5px;color:var(--ink-2);line-height:1.6;padding-top:8px;word-break:break-all;}
+.import-meta.mono{font-size:11px;}
+
+.cover-up{
+  width:63px;height:84px;border:1px dashed #cfd8e6;border-radius:6px;background:#fafbfc;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;
+  position:relative;transition:border-color .15s;
+}
+.cover-up:hover{border-color:var(--blue);}
+.cover-up img{width:100%;height:100%;object-fit:cover;display:block;}
+.cover-up .ph{display:flex;flex-direction:column;align-items:center;gap:3px;color:#9aa9c0;font-size:10px;}
+.cover-up .ph em{font-style:normal;}
+.cover-up.has-img .ph{display:none;}
+.cover-up.invalid{border-color:var(--red);}
+
+.err-msg{color:var(--red);font-size:11px;line-height:1.4;margin-top:2px;}
+input.invalid,.textarea.invalid{border-color:#e5484d !important;box-shadow:none !important;}
+
+/* 重试编辑表单 */
+.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 16px;margin-top:16px;}
+.form-grid .full{grid-column:1 / -1;}
+.fi .fl{font-size:12px;color:var(--ink-2);margin-bottom:5px;}
+.fi .fl i{color:var(--red);font-style:normal;margin-left:2px;}
+.fi .fv{font-size:13px;color:var(--ink);padding-top:8px;}
+.form-grid .textarea{min-height:74px;}
+
+/* 模板表格 */
+.tpl-table{width:100%;border-collapse:collapse;font-size:13px;}
+.tpl-table th,.tpl-table td{border:1px solid var(--line);padding:9px 12px;text-align:left;}
+.tpl-table th{background:#fafbfc;color:var(--ink-2);font-weight:500;font-size:12.5px;}
+.tpl-note{margin:12px 0 2px;font-size:12.5px;line-height:1.7;color:var(--ink-3);}
+.tpl-note b{color:var(--ink-2);font-weight:600;}
+
+/* 重试表单：两列信息 + 封面临数一行 */
+.form-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+.form-row{display:flex;align-items:flex-start;gap:16px;margin-top:14px;}
+.form-row .fi{flex:1;min-width:0;}
+.form-row .fi-cover{flex:0 0 auto;}
+
+/* 模板弹窗 */
+.modal.mid{width:860px;max-width:calc(100vw - 48px);}
+.tpl-table td{vertical-align:top;}
+.tpl-table td.tpl-desc{font-size:12px;line-height:1.9;color:var(--ink-2);}
+table.import{min-width:820px;}
+.tpl-lang{white-space:nowrap;}
+.tpl-lead{margin-bottom:2px;}

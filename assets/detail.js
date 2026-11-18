@@ -179,9 +179,23 @@ function renderAll() {
 }
 
 /* ---------- retry ---------- */
+let retryEdit = false;
+
 function openRetry() {
-  document.getElementById('retryScope').innerHTML =
-    `重试记录：<b style="color:var(--ink)">${esc(drama.name)}</b>（${drama.dramaCode}）`;
+  retryEdit = drama.syncStatus === 'create_failed';
+  const fields = document.getElementById('retryFields');
+  const scope = document.getElementById('retryScope');
+  if (retryEdit) {
+    fields.innerHTML = dfFieldGrid(drama);
+    fields.classList.remove('hidden');
+    scope.classList.add('hidden');
+    scope.innerHTML = '';
+  } else {
+    fields.innerHTML = '';
+    fields.classList.add('hidden');
+    scope.classList.remove('hidden');
+    scope.innerHTML = `重试记录：<b style="color:var(--ink)">${esc(drama.name)}</b>（${drama.dramaCode}）`;
+  }
   document.getElementById('modal-retry').classList.remove('hidden');
 }
 function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
@@ -193,6 +207,15 @@ document.addEventListener('keydown', e => {
 });
 
 function confirmRetry() {
+  if (retryEdit) {
+    const res = dfRead(document.getElementById('retryFields'));
+    if (!res.ok) { toast('请完善短剧信息后再重试', 'err'); return; }
+    drama.name = res.values.title;
+    drama.description = res.values.desc;
+    drama.cover = res.values.cover;
+    drama.episodes = res.values.episodes;
+    drama.paidEpisodes = res.values.paid;
+  }
   closeModal('modal-retry');
   drama.syncStatus = 'uploading';
   drama.uploadedEpisodes = Math.max(0, drama.episodes - (drama.failedEpisodes || 0));

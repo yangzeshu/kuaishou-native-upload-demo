@@ -6,7 +6,9 @@ const state = {
   page: 1,
   pageSize: 10,
   selected: new Set(),
-  retryIds: []
+  retryIds: [],
+  retryEdit: false,
+  importRows: []
 };
 
 const RETRYABLE = ['upload_failed', 'create_failed'];
@@ -254,14 +256,8 @@ document.getElementById('checkAll').addEventListener('change', e => {
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
-    document.querySelectorAll('.mask:not(.hidden)').forEach(m => {
-      const id = m.id;
-      if (id === 'modal-task') closeModal(id);
-      else if (id === 'modal-batch') closeModal(id);
-      else if (id === 'modal-retry') closeModal(id);
-      else if (id === 'modal-reason') closeModal(id);
-      else if (id === 'modal-result') closeModal(id);
-    });
+    const masks = [...document.querySelectorAll('.mask:not(.hidden)')];
+    if (masks.length) closeModal(masks[masks.length - 1].id);
     document.getElementById('scriptSelect').classList.remove('is-open');
     document.getElementById('dateRange').classList.remove('is-open');
   }
@@ -396,7 +392,6 @@ document.getElementById('drApply').addEventListener('click', () => {
 /* ---------- modals ---------- */
 function openModal(id) {
   document.getElementById(id).classList.remove('hidden');
-  if (id === 'modal-task') setTimeout(() => document.getElementById('taskIds').focus(), 60);
   if (id === 'modal-batch') {
     const ta = document.getElementById('batchScripts');
     ta.value = state.filters.scripts.join('\n');
@@ -426,41 +421,121 @@ function applyBatchScripts() {
   if (miss.length) setTimeout(() => toast(`${miss.length} 个编号未匹配到剧本：${miss.slice(0, 3).join('、')}${miss.length > 3 ? '…' : ''}`, 'err'), 300);
 }
 
-/* ---------- 任务新建 ---------- */
-let lastResult = null;
+/* ---------- 任务新建：Excel 批量导入 ---------- */
+const IMPORT_DEMO = [
+  {
+    dramaCode: '210773370001', app: 'ns_app', title: '隐婚总裁请签字',
+    description: '苏念替姐姐嫁入豪门，却在婚后发现丈夫早已知道她的真实身份。',
+    episodes: 68, paid: 60, scriptCode: 'B5567', scriptName: 'Love at First Sight',
+    lang: '英语', duration: '02:16:12'
+  },
+  {
+    dramaCode: '210773370002', app: 'iaa小程序', title: '错爱成婚',
+    description: '一场蓄谋已久的错嫁，让两个原本陌生的人被迫绑在一起。',
+    episodes: 52, paid: 44, scriptCode: 'N6612', scriptName: 'My Hidden Rich Husband',
+    lang: '日语', duration: '01:58:40'
+  },
+  {
+    dramaCode: '210773370003', app: 'iap小程序', title: '重生之影后归来',
+    description: '被至亲背叛的影后重回十年前，带着记忆夺回属于自己的一切。',
+    episodes: 74, paid: 66, scriptCode: 'P7723', scriptName: 'After the Flash Marriage',
+    lang: '英语', duration: '02:28:05'
+  }
+];
+
+function importRowHTML(r, i) {
+  return `<tr data-row="${i}">
+    <td class="cell"><div class="import-meta mono">${r.dramaCode}</div></td>
+    <td class="cell">
+      <input class="input" data-f="title" maxlength="100" value="${esc(r.title)}"/>
+      <div class="err-msg"></div>
+    </td>
+    <td class="cell">
+      <textarea class="textarea" data-f="desc" maxlength="1500">${esc(r.description)}</textarea>
+      <div class="err-msg"></div>
+    </td>
+    <td class="cell">${dfCoverHTML(r.cover)}</td>
+    <td class="cell">
+      <input class="input" data-f="episodes" type="number" min="1" value="${r.episodes}"/>
+      <div class="err-msg"></div>
+    </td>
+    <td class="cell">
+      <input class="input" data-f="paid" type="number" min="1" value="${r.paid}"/>
+      <div class="err-msg"></div>
+    </td>
+  </tr>`;
+}
+
+function renderImportRows() {
+  const area = document.getElementById('importArea');
+  if (!state.importRows.length) {
+    area.innerHTML = `<div class="import-empty">上传文件后展示短剧详情</div>`;
+    return;
+  }
+  area.innerHTML = `<div class="import-wrap">
+    <table class="import">
+      <colgroup>
+        <col style="width:108px"/><col style="width:176px"/><col/>
+        <col style="width:78px"/><col style="width:88px"/><col style="width:88px"/>
+      </colgroup>
+      <thead>
+        <tr><th>短剧ID</th><th>标题</th><th>简介</th><th>封面</th><th>总集数</th><th>付费卡点</th></tr>
+      </thead>
+      <tbody>${state.importRows.map(importRowHTML).join('')}</tbody>
+    </table>
+  </div>`;
+}
+
+function parseDemoFile() {
+  state.importRows = IMPORT_DEMO.map((r, i) => ({
+    ...r,
+    cover: poster({ id: 'import-' + i, name: r.title, episodes: r.episodes, duration: r.duration, lang: r.lang })
+  }));
+  renderImportRows();
+}
+
+document.getElementById('excelZone').addEventListener('click', () => {
+  const zone = document.getElementById('excelZone');
+  if (zone.classList.contains('parsing')) return;
+  zone.classList.add('parsing');
+  const title = zone.querySelector('.uz-title');
+  title.textContent = '正在解析文件…';
+  setTimeout(() => {
+    parseDemoFile();
+    zone.classList.remove('parsing');
+    title.textContent = '点击上传 Excel 文件';
+  }, 600);
+});
 
 function submitTask() {
-  const raw = document.getElementById('taskIds').value.trim();
-  const lines = raw ? raw.split(/\n+/).map(s => s.trim()).filter(Boolean) : [];
-  const list = lines.length ? lines : DEMO_SUBMIT_IDS.map(x => x.id);
+  const rows = [...document.querySelectorAll('#importArea tbody tr')];
+  if (!rows.length) { toast('请先上传文件添加短剧', 'err'); return; }
 
-  const results = list.map((id, i) => {
-    const preset = DEMO_SUBMIT_IDS.find(x => x.id === id);
-    const pool = SUBMIT_POOL[i % SUBMIT_POOL.length];
-    const existing = state.data.find(d => d.dramaCode === id);
-    let ok, reason;
-    if (preset) { ok = preset.ok; reason = preset.reason; }
-    else {
-      const h = hashStr(id);
-      ok = h % 3 !== 0;
-      reason = ['集数与短剧生成成功的最新成片数量不一致', '短剧名称为空', '封面为空'][h % 3];
-    }
-    return {
-      id, ok, reason,
-      name: existing ? existing.name : pool.name,
-      episodes: existing ? existing.episodes : pool.episodes,
-      duration: existing ? existing.duration : pool.duration,
-      scriptCode: existing ? existing.scriptCode : pool.scriptCode,
-      scriptName: existing ? existing.scriptName : pool.scriptName,
-      lang: existing ? existing.lang : pool.lang,
-      onlineStatus: existing ? existing.onlineStatus : pool.onlineStatus,
-      paidEpisodes: existing ? existing.paidEpisodes : pool.paidEpisodes
-    };
+  const items = [];
+  let firstBad = null;
+  rows.forEach((tr, i) => {
+    const res = dfRead(tr);
+    if (!res.ok && !firstBad) firstBad = tr;
+    items.push({ ...state.importRows[i], ...res.values });
   });
+  if (firstBad) {
+    firstBad.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    toast('请完善短剧信息后再提交', 'err');
+    return;
+  }
+
+  const results = items.map((it, i) => ({
+    id: it.dramaCode,
+    ok: i !== 2,
+    reason: '集数与短剧生成成功的最新成片数量不一致',
+    name: it.title, episodes: it.episodes, duration: it.duration,
+    scriptCode: it.scriptCode, scriptName: it.scriptName, lang: it.lang,
+    onlineStatus: '待上线', paidEpisodes: it.paid,
+    app: it.app, description: it.description, cover: it.cover
+  }));
 
   const okList = results.filter(r => r.ok);
   const failList = results.filter(r => !r.ok);
-  lastResult = { okList, failList };
 
   document.getElementById('resultBody').innerHTML = `
     <div class="result-summary">
@@ -484,7 +559,6 @@ function submitTask() {
   closeModal('modal-task');
   openModal('modal-result');
 
-  /* 成功任务进入列表，状态为物料上传中 */
   if (okList.length) {
     const now = fmtNow();
     const newRows = okList.map(r => ({
@@ -492,6 +566,7 @@ function submitTask() {
       episodes: r.episodes, duration: r.duration,
       scriptName: r.scriptName, scriptCode: r.scriptCode,
       onlineStatus: r.onlineStatus, paidEpisodes: r.paidEpisodes,
+      app: r.app, description: r.description, cover: r.cover,
       syncStatus: 'uploading', uploadedEpisodes: 0, uploader: '春明', uploadTime: now
     }));
     state.data = [...newRows, ...state.data];
@@ -507,10 +582,27 @@ function submitTask() {
 function openRetry(ids) {
   state.retryIds = ids;
   const ds = ids.map(id => state.data.find(d => d.id === id)).filter(Boolean);
+  const single = ds.length === 1 ? ds[0] : null;
+  const editable = !!single && single.syncStatus === 'create_failed';
+  state.retryEdit = editable;
+
   document.getElementById('retryTitle').textContent = ids.length > 1 ? '批量重试上传' : '重试上传';
-  document.getElementById('retryScope').innerHTML = ids.length > 1
-    ? `本次将对已选 <b style="color:var(--ink)">${ids.length}</b> 条记录发起重传：${ds.slice(0, 3).map(d => esc(d.name)).join('、')}${ds.length > 3 ? ' 等' : ''}`
-    : `重试记录：<b style="color:var(--ink)">${esc(ds[0].name)}</b>（${ds[0].dramaCode}）`;
+  const fields = document.getElementById('retryFields');
+  const scope = document.getElementById('retryScope');
+
+  if (editable) {
+    fields.innerHTML = dfFieldGrid(single);
+    fields.classList.remove('hidden');
+    scope.classList.add('hidden');
+    scope.innerHTML = '';
+  } else {
+    fields.innerHTML = '';
+    fields.classList.add('hidden');
+    scope.classList.remove('hidden');
+    scope.innerHTML = ids.length > 1
+      ? `本次将对已选 <b style="color:var(--ink)">${ids.length}</b> 条记录发起重传：${ds.slice(0, 3).map(d => esc(d.name)).join('、')}${ds.length > 3 ? ' 等' : ''}`
+      : `重试记录：<b style="color:var(--ink)">${esc(ds[0].name)}</b>（${ds[0].dramaCode}）`;
+  }
   openModal('modal-retry');
 }
 
@@ -529,6 +621,18 @@ function openBatchRetry() {
 
 function confirmRetry() {
   const ids = state.retryIds.slice();
+  if (state.retryEdit) {
+    const res = dfRead(document.getElementById('retryFields'));
+    if (!res.ok) { toast('请完善短剧信息后再重试', 'err'); return; }
+    const d = state.data.find(x => x.id === ids[0]);
+    if (d) {
+      d.name = res.values.title;
+      d.description = res.values.desc;
+      d.cover = res.values.cover;
+      d.episodes = res.values.episodes;
+      d.paidEpisodes = res.values.paid;
+    }
+  }
   closeModal('modal-retry');
   ids.forEach(id => {
     const d = state.data.find(x => x.id === id);

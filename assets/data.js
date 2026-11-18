@@ -34,6 +34,7 @@ function wrapTitle(title, perLine, maxLines) {
 }
 
 function poster(d) {
+  if (d.cover) return d.cover;
   const idx = hashStr(d.id) % PALETTES.length;
   const [c1, c2] = PALETTES[idx];
   const lines = wrapTitle(d.name, 6, 3);
@@ -63,7 +64,7 @@ function poster(d) {
     <text x="20" y="${238 - (lines.length - 1) * 30}" font-family="PingFang SC,Microsoft YaHei,sans-serif"
       font-size="26" font-weight="700" fill="#fff" letter-spacing=".5">${tspans}</text>
     <text x="20" y="298" font-family="PingFang SC,Microsoft YaHei,sans-serif" font-size="12"
-      fill="#fff" opacity=".72" letter-spacing="1">${d.episodes} 集 · ${d.duration}</text>
+      fill="#fff" opacity=".72" letter-spacing="1">${d.episodes} 集${d.duration ? ' · ' + d.duration : ''}</text>
   </svg>`;
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
 }
@@ -86,6 +87,7 @@ const DRAMAS = [
     id: 'ns-210773357120', dramaCode: '210773357120', name: '全球橱王：开局一地摊', lang: '英语',
     episodes: 66, duration: '02:12:50', scriptName: 'Life of a Street Vendor', scriptCode: 'B1450',
     onlineStatus: '已上线', paidEpisodes: 58, syncStatus: 'create_failed',
+    app: 'ns_app', description: '摊贩陈默意外获得商业系统，从街边小摊一路逆袭成为商业大亨。',
     uploadedEpisodes: 66, uploader: '春明', uploadTime: '2026-11-17 11:08',
     failReason: {
       code: 'COURSE_MODULE_NO_FREE',
@@ -111,6 +113,7 @@ const DRAMAS = [
     id: 'ns-210773351880', dramaCode: '210773351880', name: '离婚后，前夫跪求复合', lang: '韩语',
     episodes: 52, duration: '01:47:22', scriptName: 'Begging for a Second Chance', scriptCode: 'N8899',
     onlineStatus: '预上线', paidEpisodes: 44, syncStatus: 'create_failed',
+    app: 'iaa小程序', description: '林晚离婚后重启人生，前夫却发现她才是自己真正的挚爱。',
     uploadedEpisodes: 52, uploader: '春明', uploadTime: '2026-11-16 20:05',
     failReason: {
       code: 'DATA_NOT_FOUND',
@@ -157,6 +160,7 @@ const DRAMAS = [
     id: 'ns-210773336118', dramaCode: '210773336118', name: '落魄千金要逆袭', lang: '英语',
     episodes: 56, duration: '01:55:03', scriptName: 'The Fallen Heiress', scriptCode: 'B2244',
     onlineStatus: '已上线', paidEpisodes: 48, syncStatus: 'create_failed',
+    app: 'iap小程序', description: '豪门千金一夜跌落谷底，凭借自己的能力重新站上巅峰。',
     uploadedEpisodes: 56, uploader: '春明', uploadTime: '2026-11-14 17:05',
     failReason: {
       code: 'OPEN_API_VIDEO_NOT_TRANSCODED',
