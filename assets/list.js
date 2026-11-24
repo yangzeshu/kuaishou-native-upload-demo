@@ -8,7 +8,8 @@ const state = {
   selected: new Set(),
   retryIds: [],
   retryEdit: false,
-  importRows: []
+  importRows: [],
+  languages: []
 };
 
 const RETRYABLE = ['upload_failed', 'create_failed'];
@@ -237,6 +238,8 @@ document.addEventListener('click', e => {
   }
 
   if (!e.target.closest('#scriptSelect')) document.getElementById('scriptSelect').classList.remove('is-open');
+  const langSel = document.getElementById('langSelect');
+  if (langSel && !e.target.closest('#langSelect')) langSel.classList.remove('is-open');
   if (!e.target.closest('#dateRange')) document.getElementById('dateRange').classList.remove('is-open');
 });
 
@@ -255,12 +258,17 @@ document.getElementById('checkAll').addEventListener('change', e => {
 });
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    const masks = [...document.querySelectorAll('.mask:not(.hidden)')];
-    if (masks.length) closeModal(masks[masks.length - 1].id);
-    document.getElementById('scriptSelect').classList.remove('is-open');
-    document.getElementById('dateRange').classList.remove('is-open');
+  if (e.key !== 'Escape') return;
+  const scriptSel = document.getElementById('scriptSelect');
+  const dateRange = document.getElementById('dateRange');
+  const langSel = document.getElementById('langSelect');
+  const openPop = [scriptSel, dateRange, langSel].filter(el => el && el.classList.contains('is-open'));
+  if (openPop.length) {
+    openPop.forEach(el => el.classList.remove('is-open'));
+    return;
   }
+  const masks = [...document.querySelectorAll('.mask:not(.hidden)')];
+  if (masks.length) closeModal(masks[masks.length - 1].id);
 });
 
 /* ---------- script multiselect ---------- */
@@ -469,7 +477,7 @@ function importRowHTML(r, i) {
 function renderImportRows() {
   const area = document.getElementById('importArea');
   if (!state.importRows.length) {
-    area.innerHTML = `<div class="import-empty">上传文件后展示短剧详情</div>`;
+    area.innerHTML = `<div class="import-empty">填写剧本编号并选择语言后，点击提取</div>`;
     return;
   }
   area.innerHTML = `<div class="import-wrap">
@@ -486,30 +494,92 @@ function renderImportRows() {
   </div>`;
 }
 
-function parseDemoFile() {
-  state.importRows = IMPORT_DEMO.map((r, i) => ({
-    ...r,
-    cover: poster({ id: 'import-' + i, name: r.title, episodes: r.episodes, duration: r.duration, lang: r.lang })
-  }));
+/* ---------- 语言下拉多选 ---------- */
+function renderLangTags() {
+  const wrap = document.getElementById('langTags');
+  wrap.innerHTML = state.languages.map(name =>
+    `<span class="ms-tag"><span>${esc(name)}</span><i data-langrm="${esc(name)}">×</i></span>`
+  ).join('');
+  document.getElementById('langPh').style.display = state.languages.length ? 'none' : 'inline';
+}
+
+function renderLangDrop() {
+  const drop = document.getElementById('langDrop');
+  drop.innerHTML = LANG_OPTIONS.map(l => {
+    const sel = state.languages.includes(l.name);
+    return `<div class="ms-opt ${sel ? 'selected' : ''}" data-langopt="${esc(l.name)}">
+      <span class="name">${esc(l.name)}</span>
+      <span class="code">${l.code}</span>
+      <span class="ck"><svg width="13" height="13"><use href="#i-check"/></svg></span>
+    </div>`;
+  }).join('');
+}
+
+function toggleLang(name) {
+  const i = state.languages.indexOf(name);
+  if (i >= 0) state.languages.splice(i, 1); else state.languages.push(name);
+  renderLangTags();
+  document.querySelectorAll('#langDrop .ms-opt').forEach(el => {
+    el.classList.toggle('selected', state.languages.includes(el.dataset.langopt));
+  });
+}
+
+document.getElementById('langBox').addEventListener('click', e => {
+  if (e.target.closest('[data-langrm]')) return;
+  const box = document.getElementById('langSelect');
+  box.classList.toggle('is-open');
+  if (box.classList.contains('is-open')) renderLangDrop();
+});
+
+document.getElementById('langDrop').addEventListener('click', e => {
+  const opt = e.target.closest('[data-langopt]');
+  if (!opt) return;
+  toggleLang(opt.dataset.langopt);
+});
+
+document.getElementById('langTags').addEventListener('click', e => {
+  const rm = e.target.closest('[data-langrm]');
+  if (!rm) return;
+  e.stopPropagation();
+  state.languages = state.languages.filter(n => n !== rm.dataset.langrm);
+  renderLangTags();
+  renderLangDrop();
+});
+
+/* ---------- 提取短剧信息 ---------- */
+function extractDramas() {
+  const raw = document.getElementById('extractScripts').value.trim();
+  let codes = raw ? raw.split(/\n+/).map(x => x.trim().toUpperCase()).filter(Boolean) : [];
+  if (!codes.length) codes = ['B5567', 'N6612', 'P7723'];
+  const selected = state.languages;
+
+  state.importRows = codes.slice(0, 8).map((code, i) => {
+    const known = DRAMAS.find(d => d.scriptCode === code);
+    const base = IMPORT_DEMO[i % IMPORT_DEMO.length];
+    const title = known ? known.name : base.title;
+    const episodes = known ? known.episodes : base.episodes;
+    const paid = known ? known.paidEpisodes : base.paid;
+    const duration = known ? known.duration : base.duration;
+    const scriptName = known ? known.scriptName : base.scriptName;
+    const description = (known && known.description) ? known.description : base.description;
+    const lang = known ? known.lang : (selected[i % selected.length] || base.lang);
+    const dramaCode = known ? known.dramaCode : '21077339' + String(1001 + i);
+    return {
+      dramaCode,
+      app: DF_APPS[i % DF_APPS.length],
+      title, description, episodes, paid,
+      scriptCode: code, scriptName, lang, duration,
+      cover: poster({ id: 'extract-' + i, name: title, episodes, duration, lang })
+    };
+  });
   renderImportRows();
 }
 
-document.getElementById('excelZone').addEventListener('click', () => {
-  const zone = document.getElementById('excelZone');
-  if (zone.classList.contains('parsing')) return;
-  zone.classList.add('parsing');
-  const title = zone.querySelector('.uz-title');
-  title.textContent = '正在解析文件…';
-  setTimeout(() => {
-    parseDemoFile();
-    zone.classList.remove('parsing');
-    title.textContent = '点击上传 Excel 文件';
-  }, 600);
-});
+document.getElementById('btnExtract').addEventListener('click', extractDramas);
 
 function submitTask() {
   const rows = [...document.querySelectorAll('#importArea tbody tr')];
-  if (!rows.length) { toast('请先上传文件添加短剧', 'err'); return; }
+  if (!rows.length) { toast('请先提取短剧信息', 'err'); return; }
 
   const items = [];
   let firstBad = null;
@@ -689,4 +759,6 @@ function showReason(id) {
 document.getElementById('btnBatchScript').addEventListener('click', () => openModal('modal-batch'));
 renderScriptTags();
 renderDropdown('');
+renderLangTags();
+renderLangDrop();
 render();

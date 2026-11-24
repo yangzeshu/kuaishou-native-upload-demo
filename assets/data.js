@@ -191,6 +191,14 @@ const DRAMAS = [
 ];
 
 const LANGS = ['英语', '西班牙语', '葡萄牙语', '日语', '韩语', '印尼语', '泰语'];
+const LANG_OPTIONS = [
+  { name: '英语', code: 'en_US' }, { name: '繁体中文', code: 'zh_TW' }, { name: '韩语', code: 'ko_KR' },
+  { name: '西班牙语', code: 'es_ES' }, { name: '日语', code: 'ja_JP' }, { name: '印尼语', code: 'id_ID' },
+  { name: '泰语', code: 'th_TH' }, { name: '葡萄牙语', code: 'pt_PT' }, { name: '简体中文', code: 'zh_CN' },
+  { name: '法语', code: 'fr_FR' }, { name: '德语', code: 'de_DE' }, { name: '意大利语', code: 'it_IT' },
+  { name: '阿拉伯', code: 'ar_AE' }, { name: '马来语', code: 'ms_MY' }, { name: '土语', code: 'tr_TR' },
+  { name: '越南语', code: 'vi_VN' }, { name: '印地语', code: 'hi_IN' }
+];
 const ONLINE_STATUS = ['待上线', '预上线', '已上线'];
 const SYNC_STATUS = {
   uploading: { label: '物料上传中', cls: 'pill-blue', desc: '剧集视频上传 / 转码处理中' },

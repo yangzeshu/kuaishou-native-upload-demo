@@ -235,47 +235,30 @@
       <button class="modal-close" onclick="closeModal('modal-task')"><svg width="16" height="16"><use href="#i-close"/></svg></button>
     </div>
     <div class="modal-body">
-      <div class="section-head">
-        <span class="section-title">批量添加短剧</span>
-        <button class="btn btn-default btn-sm" onclick="openModal('modal-template')">模板下载</button>
-      </div>
-      <div class="upload-zone" id="excelZone">
-        <div class="uz-icon"><svg width="20" height="20"><use href="#i-upload"/></svg></div>
-        <div class="uz-title">点击上传 Excel 文件</div>
-        <div class="uz-desc">支持 .xlsx / .xls；演示环境点击后加载示例数据</div>
+      <div class="section-head"><span class="section-title">选择短剧</span></div>
+      <div class="extract-stack">
+        <div class="fi">
+          <div class="fl">剧本编号</div>
+          <textarea class="textarea" id="extractScripts" rows="3" placeholder="支持输入多个剧本编号，换行分隔"></textarea>
+        </div>
+        <div class="fi">
+          <div class="fl">语言</div>
+          <div class="multiselect" id="langSelect">
+            <div class="ms-box" id="langBox">
+              <span id="langTags"></span>
+              <span class="ms-ph" id="langPh">请选择语言</span>
+            </div>
+            <div class="ms-drop" id="langDrop"></div>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="btnExtract">提取</button>
       </div>
       <div class="section-head" style="margin-top:18px"><span class="section-title">上传短剧详情</span></div>
-      <div id="importArea"><div class="import-empty">上传文件后展示短剧详情</div></div>
+      <div id="importArea"><div class="import-empty">填写剧本编号并选择语言后，点击提取</div></div>
     </div>
     <div class="modal-foot bordered">
       <button class="btn btn-default" onclick="closeModal('modal-task')">取消</button>
       <button class="btn btn-primary" onclick="submitTask()">提交</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============ 模板下载 ============ -->
-<div class="mask hidden" id="modal-template">
-  <div class="modal mid">
-    <div class="modal-head">
-      <h3 class="modal-title">模板下载</h3>
-      <button class="modal-close" onclick="closeModal('modal-template')"><svg width="16" height="16"><use href="#i-close"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <table class="tpl-table">
-        <colgroup><col style="width:130px"/><col style="width:380px"/><col style="width:310px"/></colgroup>
-        <thead><tr><th>剧本编号</th><th>语言</th><th>信息读取端</th></tr></thead>
-        <tbody>
-          <tr>
-            <td class="tpl-desc">一行一个剧本</td>
-            <td class="tpl-desc"><div class="tpl-lead">一行一个语言码。语言码详见：</div><span class="tpl-lang">英语-en_US</span>，<span class="tpl-lang">繁体中文-zh_TW</span>，<span class="tpl-lang">韩语-ko_KR</span>，<span class="tpl-lang">西班牙语-es_ES</span>，<span class="tpl-lang">日语-ja_JP</span>，<span class="tpl-lang">印尼语-id_ID</span>，<span class="tpl-lang">泰语-th_TH</span>，<span class="tpl-lang">葡萄牙语-pt_PT</span>，<span class="tpl-lang">简体中文-zh_CN</span>，<span class="tpl-lang">法语-fr_FR</span>，<span class="tpl-lang">德语-de_DE</span>，<span class="tpl-lang">意大利语-it_IT</span>，<span class="tpl-lang">阿拉伯-ar_AE</span>，<span class="tpl-lang">马来语-ms_MY</span>，<span class="tpl-lang">土语-tr_TR</span>，<span class="tpl-lang">越南语-vi_VN</span>，<span class="tpl-lang">印地语-hi_IN</span></td>
-            <td class="tpl-desc">单行填写一个应用端code。单个剧本-语言如果针对不同端进行了剧名差异化，支持直接在快手侧做成多个任务。填写对应的应用端code，读取剧名、简介、封面。如统一短剧在填写的应用端剧名不同，会拆分成两个任务。</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-default" onclick="closeModal('modal-template')">关闭</button>
     </div>
   </div>
 </div>

@@ -723,3 +723,20 @@ input.invalid,.textarea.invalid{border-color:#e5484d !important;box-shadow:none 
 table.import{min-width:820px;}
 .tpl-lang{white-space:nowrap;}
 .tpl-lead{margin-bottom:2px;}
+
+/* 任务新建：提取表单 */
+.extract-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px auto;gap:16px;align-items:start;}
+.extract-grid .textarea{min-height:88px;}
+#btnExtract{margin-top:23px;}
+#langBox{cursor:pointer;max-height:88px;}
+.ms-ph{font-size:13px;color:var(--ink-4);}
+
+/* 任务新建：给下拉留出空间，避免被弹窗滚动区裁切 */
+#importArea{min-height:240px;}
+#importArea > .import-empty{min-height:240px;display:flex;align-items:center;justify-content:center;}
+#langSelect .ms-drop{max-height:240px;}
+
+/* 任务新建：选择短剧（纵向） */
+.extract-stack .fi + .fi{margin-top:14px;}
+.extract-stack .multiselect{max-width:320px;}
+.extract-stack #btnExtract{margin-top:14px;}
